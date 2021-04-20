@@ -4,7 +4,7 @@
   "description": "Log 404 errors for BE users to easily create redirects",
   "require": {
     "php": "^7.3||^7.4||^8.0",
-	  "typo3/cms-core": "^9.5|",
+	  "typo3/cms-core": "^9.5",
 	  "typo3/cms-redirects": "^9.5",
 	  "lochmueller/autoloader": "^6.0"
   },
