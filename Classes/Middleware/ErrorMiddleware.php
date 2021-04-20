@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace HDNET\ErrorLog\Middleware;
 
+use HDNET\ErrorLog\Domain\Repository\ErrorRepository;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
@@ -35,9 +36,8 @@ class ErrorMiddleware implements MiddlewareInterface
                 $uriIn = (string) $request->getUri();
                 $extension = (string) PathUtility::pathinfo((string) \parse_url($uriIn, PHP_URL_PATH), PATHINFO_EXTENSION);
                 if (false === \mb_strpos($uriIn, '/typo3temp/') && false === \mb_strpos($uriIn, '/typo3conf/') && !\in_array($extension, $this->getDoNotLogExtensions(), true)) {
-                    $table = 'tx_site_domain_model_error';
-                    $connection = GeneralUtility::makeInstance(ConnectionPool::class)->getConnectionForTable($table);
-                    $connection->insert($table, [
+                    $connection = GeneralUtility::makeInstance(ConnectionPool::class)->getConnectionForTable(ErrorRepository::TABLE_NAME);
+                    $connection->insert(ErrorRepository::TABLE_NAME, [
                         'uri' => $uriIn,
                         'crdate' => \time(),
                         'tstamp' => \time(),

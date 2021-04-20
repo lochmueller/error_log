@@ -20,7 +20,7 @@
 		<f:for each="{errors}" as="error">
 			<tr>
 				<td>
-					<a class="btn btn-primary" href="<site:link.newRecord table="sys_redirect" returnUrl="{f:be.uri(route: 'site_SiteError')}"
+					<a class="btn btn-primary" href="<errorLog:link.newRecord table="sys_redirect" returnUrl="{f:be.uri(route: 'site_ErrorLogError')}"
 					fields="{error.fields}"/>">
 
 					Redirect anlegen

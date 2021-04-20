@@ -11,6 +11,9 @@ use TYPO3\CMS\Extbase\Persistence\Repository;
 
 class ErrorRepository extends Repository
 {
+
+    public const TABLE_NAME = 'tx_errorlog_domain_model_error';
+
     /**
      * @return QueryInterface
      */
@@ -24,13 +27,12 @@ class ErrorRepository extends Repository
 
     public function findLatest(): array
     {
-        $table = 'tx_site_domain_model_error';
-        $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)->getQueryBuilderForTable($table);
+        $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)->getQueryBuilderForTable(self::TABLE_NAME);
 
         return (array) $queryBuilder
             ->select('uri')
             ->addSelectLiteral('COUNT(*) as c')
-            ->from($table)
+            ->from(self::TABLE_NAME)
             ->groupBy('uri')
             ->orderBy('c', 'DESC')
             ->setMaxResults(1000)

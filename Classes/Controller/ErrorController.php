@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace HDNET\ErrorLog\Controller;
 
+use HDNET\ErrorLog\Domain\Repository\ErrorRepository;
 use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Core\Messaging\FlashMessage;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
@@ -46,9 +47,8 @@ class ErrorController extends ActionController
     {
         $this->addFlashMessage('Die 404-Error Liste wurde erfolgreich zurückgesetzt.', 'Liste geleert', FlashMessage::OK, true);
 
-        $t = 'tx_site_domain_model_error';
-        $connection = GeneralUtility::makeInstance(ConnectionPool::class)->getConnectionForTable($t);
-        $connection->truncate($t);
+        $connection = GeneralUtility::makeInstance(ConnectionPool::class)->getConnectionForTable(ErrorRepository::TABLE_NAME);
+        $connection->truncate(ErrorRepository::TABLE_NAME);
 
         $this->forward('index');
     }
