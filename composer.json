@@ -1,0 +1,30 @@
+{
+  "name": "lochmueller/error-log",
+  "type": "typo3-cms-extension",
+  "description": "Log 404 errors for BE users to easily create redirects",
+  "require": {
+    "php": "^7.3||^7.4||^8.0",
+	  "typo3/cms-core": "^9.5|",
+	  "typo3/cms-redirects": "^9.5",
+	  "lochmueller/autoloader": "^6.0"
+  },
+  "autoload": {
+    "psr-4": {
+      "HDNET\\ErrorLog\\": "Classes/"
+    }
+  },
+  "homepage": "https://www.hdnet.de",
+  "config": {
+    "vendor-dir": ".Build/vendor",
+    "bin-dir": ".Build/bin",
+    "preferred-install": {
+      "*": "dist"
+    }
+  },
+  "extra": {
+    "typo3/cms": {
+      "cms-package-dir": "{$vendor-dir}/typo3/cms",
+      "web-dir": ".Build/Web"
+    }
+  }
+}

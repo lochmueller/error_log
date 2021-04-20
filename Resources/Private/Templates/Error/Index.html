@@ -1,0 +1,39 @@
+<f:layout name="Backend"/>
+
+<f:section name="Content">
+
+	<h1>404 Fehler</h1>
+
+	<p><f:link.action action="delete" class="btn btn-warning">Liste leeren</f:link.action></p>
+
+	<table class="table table-striped table-hover">
+		<thead>
+		<tr>
+			<th>Action</th>
+			<th>Anzahl</th>
+			<th>URI</th>
+		</tr>
+		</thead>
+		<tbody>
+
+
+		<f:for each="{errors}" as="error">
+			<tr>
+				<td>
+					<a class="btn btn-primary" href="<site:link.newRecord table="sys_redirect" returnUrl="{f:be.uri(route: 'site_SiteError')}"
+					fields="{error.fields}"/>">
+
+					Redirect anlegen
+					<core:icon identifier="actions-add"/>
+					</a>
+				</td>
+				<td>{error.c}</td>
+				<td class=" nowrap">
+					{error.uri}
+				</td>
+			</tr>
+		</f:for>
+
+		</tbody>
+	</table>
+</f:section>
