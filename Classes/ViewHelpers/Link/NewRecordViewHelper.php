@@ -7,22 +7,24 @@ namespace HDNET\ErrorLog\ViewHelpers\Link;
 use TYPO3\CMS\Backend\Routing\UriBuilder;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3Fluid\Fluid\Core\Rendering\RenderingContextInterface;
+use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractTagBasedViewHelper;
+use TYPO3Fluid\Fluid\Core\ViewHelper\Traits\CompileWithRenderStatic;
 
-class NewRecordViewHelper extends \TYPO3\CMS\Backend\ViewHelpers\Uri\NewRecordViewHelper
+class NewRecordViewHelper extends AbstractTagBasedViewHelper
 {
-    /**
-     * initializeArguments.
-     */
-    public function initializeArguments()
+
+    use CompileWithRenderStatic;
+    public function initializeArguments(): void
     {
-        parent::initializeArguments();
+        $this->registerArgument('uid', 'int', 'uid < 0 will insert the record after the given uid', false);
+        $this->registerArgument('pid', 'int', 'the page id where the record will be created', false);
+        $this->registerArgument('table', 'string', 'target database table', true);
+        $this->registerArgument('returnUrl', 'string', 'return to this URL after closing the edit dialog', false, '');
+        $this->registerArgument('defaultValues', 'array', 'default values for fields of the new record', false, []);
 
         $this->registerArgument('fields', 'array', '', false, []);
     }
 
-    /**
-     * @throws \TYPO3\CMS\Backend\Routing\Exception\RouteNotFoundException
-     */
     public static function renderStatic(array $arguments, \Closure $renderChildrenClosure, RenderingContextInterface $renderingContext): string
     {
         if ($arguments['uid'] && $arguments['pid']) {

@@ -1,11 +1,5 @@
 <?php
 
-\HDNET\Autoloader\Loader::extLocalconf('HDNET', 'error_log', [
-    'StaticTyposcript',
-    'ExtensionTypoScriptSetup',
-    'SmartObjects',
-    'TcaFiles',
-    'FluidNamespace',
-    'Plugins',
-    'Icon',
-]);
+declare(strict_types=1);
+
+$GLOBALS['TYPO3_CONF_VARS']['SYS']['fluid']['namespaces']['errorLog'] = ['HDNET\\ErrorLog\\ViewHelpers'];

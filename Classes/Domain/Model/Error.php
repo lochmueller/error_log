@@ -6,21 +6,9 @@ namespace HDNET\ErrorLog\Domain\Model;
 
 use TYPO3\CMS\Extbase\DomainObject\AbstractEntity;
 
-/**
- * Error.
- *
- * @db
- * @smartExclude EnableFields,Language,Workspaces
- */
 class Error extends AbstractEntity
 {
-    /**
-     * URI.
-     *
-     * @var string
-     * @db
-     */
-    protected $uri = '';
+    protected string $uri = '';
 
     public function getUri(): string
     {

@@ -12,22 +12,21 @@ use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
 
 class ErrorController extends ActionController
 {
-    /**
-     * Error repository.
-     *
-     * @var \HDNET\ErrorLog\Domain\Repository\ErrorRepository
-     */
-    protected $errorRepository;
 
-    public function injectErrorRepository(\HDNET\ErrorLog\Domain\Repository\ErrorRepository $errorRepository)
+    public function __construct(protected \HDNET\ErrorLog\Domain\Repository\ErrorRepository $errorRepository)
     {
-        $this->errorRepository = $errorRepository;
     }
 
     public function indexAction()
     {
+
+        // @todo new backend layout!!!
+
+
+        // @todo response
         $errors = $this->errorRepository->findLatest();
 
+        // @todo viewHelper?!?!
         $errors = \array_map(function ($item) {
             $uriParts = \parse_url($item['uri']);
             $item['fields'] = [

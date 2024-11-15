@@ -29,6 +29,8 @@ class ErrorRepository extends Repository
     {
         $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)->getQueryBuilderForTable(self::TABLE_NAME);
 
+        // @todo migration to iterator
+
         return (array) $queryBuilder
             ->select('uri')
             ->addSelectLiteral('COUNT(*) as c')
@@ -36,7 +38,7 @@ class ErrorRepository extends Repository
             ->groupBy('uri')
             ->orderBy('c', 'DESC')
             ->setMaxResults(1000)
-            ->execute()
-            ->fetchAll();
+            ->executeQuery()
+            ->fetchAllAssociative();
     }
 }
