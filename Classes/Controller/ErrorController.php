@@ -43,7 +43,7 @@ class ErrorController extends ActionController
             ->assignMultiple([
                 'errors' => $errors,
             ])
-            ->renderResponse('Backend/List');
+            ->renderResponse('Error/Index');
     }
 
     public function deleteAction(): ResponseInterface

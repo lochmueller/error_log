@@ -7,7 +7,7 @@ return [
         'site/error' => [
             'target' => ErrorMiddleware::class,
             'before' => [
-                'typo3/cms-frontend/tsfe',
+                'typo3/cms-frontend/maintenance-mode',
             ],
         ],
     ],
