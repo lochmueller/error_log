@@ -25,13 +25,12 @@ class ErrorRepository extends Repository
         return $query;
     }
 
-    public function findLatest(): array
+    public function findLatest(): iterable
     {
-        $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)->getQueryBuilderForTable(self::TABLE_NAME);
+        $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)
+            ->getQueryBuilderForTable(self::TABLE_NAME);
 
-        // @todo migration to iterator
-
-        return (array) $queryBuilder
+        yield from $queryBuilder
             ->select('uri')
             ->addSelectLiteral('COUNT(*) as c')
             ->from(self::TABLE_NAME)
@@ -39,6 +38,6 @@ class ErrorRepository extends Repository
             ->orderBy('c', 'DESC')
             ->setMaxResults(1000)
             ->executeQuery()
-            ->fetchAllAssociative();
+            ->iterateAssociative();
     }
 }

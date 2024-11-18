@@ -5,6 +5,10 @@ declare(strict_types=1);
 namespace HDNET\ErrorLog\Controller;
 
 use HDNET\ErrorLog\Domain\Repository\ErrorRepository;
+use Psr\Http\Message\ResponseInterface;
+use SFC\Staticfilecache\Service\QueueService;
+use TYPO3\CMS\Backend\Template\ModuleTemplate;
+use TYPO3\CMS\Backend\Template\ModuleTemplateFactory;
 use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Core\Messaging\FlashMessage;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
@@ -13,18 +17,16 @@ use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
 class ErrorController extends ActionController
 {
 
-    public function __construct(protected \HDNET\ErrorLog\Domain\Repository\ErrorRepository $errorRepository)
+    public function __construct(
+        protected ErrorRepository       $errorRepository,
+        protected ModuleTemplateFactory $moduleTemplateFactory
+    )
     {
     }
 
-    public function indexAction()
+    public function indexAction(): ResponseInterface
     {
-
-        // @todo new backend layout!!!
-
-
-        // @todo response
-        $errors = $this->errorRepository->findLatest();
+        $errors = iterator_to_array($this->errorRepository->findLatest());
 
         // @todo viewHelper?!?!
         $errors = \array_map(function ($item) {
@@ -37,18 +39,27 @@ class ErrorController extends ActionController
             return $item;
         }, $errors);
 
-        $this->view->assignMultiple([
-            'errors' => $errors,
-        ]);
+        return $this->createModuleTemplate()
+            ->assignMultiple([
+                'errors' => $errors,
+            ])
+            ->renderResponse('Backend/List');
     }
 
-    public function deleteAction()
+    public function deleteAction(): ResponseInterface
     {
         $this->addFlashMessage('Die 404-Error Liste wurde erfolgreich zurückgesetzt.', 'Liste geleert', FlashMessage::OK, true);
 
         $connection = GeneralUtility::makeInstance(ConnectionPool::class)->getConnectionForTable(ErrorRepository::TABLE_NAME);
         $connection->truncate(ErrorRepository::TABLE_NAME);
 
-        $this->forward('index');
+        return $this->redirect('index');
+    }
+
+    protected function createModuleTemplate(): ModuleTemplate
+    {
+        return $this->moduleTemplateFactory->create($this->request)
+            ->setFlashMessageQueue($this->getFlashMessageQueue())
+            ->setModuleClass('tx-errorlog');
     }
 }
