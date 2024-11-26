@@ -6,7 +6,6 @@ namespace HDNET\ErrorLog\Controller;
 
 use HDNET\ErrorLog\Domain\Repository\ErrorRepository;
 use Psr\Http\Message\ResponseInterface;
-use SFC\Staticfilecache\Service\QueueService;
 use TYPO3\CMS\Backend\Template\ModuleTemplate;
 use TYPO3\CMS\Backend\Template\ModuleTemplateFactory;
 use TYPO3\CMS\Core\Database\ConnectionPool;
