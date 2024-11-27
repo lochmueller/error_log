@@ -7,23 +7,21 @@
 
     <table class="table table-striped table-hover">
         <thead>
-        <tr>
-            <th>Action</th>
-            <th>Anzahl</th>
-            <th>URI</th>
-        </tr>
+            <tr>
+                <th>Action</th>
+                <th>Anzahl</th>
+                <th>URI</th>
+            </tr>
         </thead>
         <tbody>
-
 
         <f:for each="{errors}" as="error">
             <tr>
                 <td>
-                    <a class="btn btn-primary" href="<errorLog:link.newRecord table="sys_redirect" returnUrl="{f:be.uri(route: 'site_ErrorLog')}"
-                    fields="{error.fields}"/>">
+                    <a class="btn btn-primary" href="<errorLog:link.newRecord table="sys_redirect" returnUrl="{f:be.uri(route: 'site_ErrorLog')}" fields="{error.fields}"/>">
 
-                    Redirect anlegen
-                    <core:icon identifier="actions-add"/>
+                        Redirect anlegen
+                        <core:icon identifier="actions-add"/>
                     </a>
                 </td>
                 <td>{error.c}</td>
