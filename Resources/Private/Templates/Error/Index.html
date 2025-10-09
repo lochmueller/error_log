@@ -10,22 +10,44 @@
             <tr>
                 <th>Action</th>
                 <th>Anzahl</th>
-                <th>URI</th>
+                <th>
+                    <input class="form-control"
+                        readonly
+                        onfocus="
+this.removeAttribute('readonly');
+this.dispatchEvent(new Event('input'))
+                        "
+                        value="(\/|\.(html?|pdf))$"
+                        oninput="
+try
+{
+    this.style.borderColor = '';
+    const regex = new RegExp(this.value, 'i');
+    document.querySelectorAll('tbody tr').forEach(tr =>
+    {
+        tr.style.display = regex.test(tr.dataset.path || '') ? '' : 'none';
+    })
+}
+catch(e)
+{
+    this.style.borderColor = 'red'
+}
+                        ">
+                </th>
             </tr>
         </thead>
         <tbody>
 
         <f:for each="{errors}" as="error">
-            <tr>
+            <tr data-path="{error.fields.source_path}">
                 <td>
                     <a class="btn btn-primary" href="<errorLog:link.newRecord table="sys_redirect" returnUrl="{f:be.uri(route: 'site_ErrorLog')}" fields="{error.fields}"/>">
-
                         Redirect anlegen
                         <core:icon identifier="actions-add"/>
                     </a>
                 </td>
                 <td>{error.c}</td>
-                <td class=" nowrap">
+                <td class="nowrap">
                     {error.uri}
                 </td>
             </tr>
