@@ -9,7 +9,6 @@ use Psr\Http\Message\ResponseInterface;
 use TYPO3\CMS\Backend\Template\ModuleTemplate;
 use TYPO3\CMS\Backend\Template\ModuleTemplateFactory;
 use TYPO3\CMS\Core\Database\ConnectionPool;
-use TYPO3\CMS\Core\Messaging\FlashMessage;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
 
@@ -47,7 +46,7 @@ class ErrorController extends ActionController
 
     public function deleteAction(): ResponseInterface
     {
-        $this->addFlashMessage('Die 404-Error Liste wurde erfolgreich zurückgesetzt.', 'Liste geleert', FlashMessage::OK, true);
+        $this->addFlashMessage('Die 404-Error Liste wurde erfolgreich zurückgesetzt.', 'Liste geleert');
 
         $connection = GeneralUtility::makeInstance(ConnectionPool::class)->getConnectionForTable(ErrorRepository::TABLE_NAME);
         $connection->truncate(ErrorRepository::TABLE_NAME);
