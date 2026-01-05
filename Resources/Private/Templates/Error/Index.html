@@ -1,5 +1,5 @@
+<html xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers" data-namespace-typo3-fluid="true">
 <f:layout name="Module"/>
-
 <f:section name="Content">
     <h1>404 Fehler</h1>
 
@@ -11,28 +11,7 @@
                 <th>Action</th>
                 <th>Anzahl</th>
                 <th>
-                    <input class="form-control"
-                        readonly
-                        onfocus="
-this.removeAttribute('readonly');
-this.dispatchEvent(new Event('input'))
-                        "
-                        value="(\/|\.(html?|pdf))$"
-                        oninput="
-try
-{
-    this.style.borderColor = '';
-    const regex = new RegExp(this.value, 'i');
-    document.querySelectorAll('tbody tr').forEach(tr =>
-    {
-        tr.style.display = regex.test(tr.dataset.path || '') ? '' : 'none';
-    })
-}
-catch(e)
-{
-    this.style.borderColor = 'red'
-}
-                        ">
+                    <input class="form-control" data-action="regexPathFilter" value="(\/|\.(html?|pdf))$" readonly>
                 </th>
             </tr>
         </thead>
@@ -55,4 +34,42 @@ catch(e)
 
         </tbody>
     </table>
+
+    <f:asset.script identifier="regexPathFilter" useNonce="1">
+        const selector = 'input[data-action="regexPathFilter"]';
+
+        const handleFocus = (event) => {
+            if (!(event.target instanceof HTMLInputElement) || !event.target.matches(selector)) {
+                return;
+            }
+
+            if (event.target.hasAttribute('readonly')) {
+                event.target.removeAttribute('readonly');
+                event.target.dispatchEvent(new Event('input', { bubbles: true }));
+            }
+        };
+
+        const handleInput = (event) => {
+          if (!(event.target instanceof HTMLInputElement) || !event.target.matches(selector)) {
+              return;
+          }
+
+          try {
+              event.target.style.borderColor = '';
+
+              const regex = new RegExp(event.target.value, 'i');
+
+              document.querySelectorAll('tbody tr').forEach((tr) => {
+                  tr.style.display = regex.test(tr.dataset.path || '') ? '' : 'none';
+              });
+          } catch (e) {
+              event.target.style.borderColor = 'red';
+          }
+        };
+
+        document.addEventListener('focusin', handleFocus);
+        document.addEventListener('input', handleInput);
+    </f:asset.script>
+
 </f:section>
+</html>
