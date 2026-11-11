@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace HDNET\ErrorLog\Controller;
 
 use HDNET\ErrorLog\Domain\Repository\ErrorRepository;
+use HDNET\ErrorLog\Service\ExistingPageService;
 use Psr\Http\Message\ResponseInterface;
 use TYPO3\CMS\Backend\Template\ModuleTemplate;
 use TYPO3\CMS\Backend\Template\ModuleTemplateFactory;
@@ -16,12 +17,16 @@ class ErrorController extends ActionController
 {
     public function __construct(
         protected ErrorRepository       $errorRepository,
-        protected ModuleTemplateFactory $moduleTemplateFactory
+        protected ModuleTemplateFactory $moduleTemplateFactory,
+        protected ExistingPageService   $existingPageService
     ) {}
 
     public function indexAction(): ResponseInterface
     {
         $errors = iterator_to_array($this->errorRepository->findLatest());
+
+        // Errors that point to an existing page do not need a redirect
+        $errors = $this->existingPageService->filterExistingPages($errors);
 
         // @todo viewHelper?!?!
         $errors = \array_map(function ($item) {

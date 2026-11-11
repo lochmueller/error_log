@@ -6,7 +6,7 @@ namespace HDNET\ErrorLog\Tests\Unit\Fixtures;
 
 use TYPO3\CMS\Core\Database\Connection;
 use TYPO3\CMS\Core\Database\Query\QueryBuilder;
-use TYPO3\CMS\Core\Database\Query\Restriction\DefaultRestrictionContainer;
+use TYPO3\CMS\Core\Database\Query\Restriction\AbstractRestrictionContainer;
 
 /**
  * In-memory SQLite connection for unit tests (without schema information lookups and TCA based restrictions).
@@ -17,7 +17,8 @@ class SqliteConnection extends Connection
 {
     public function createQueryBuilder(): QueryBuilder
     {
-        return new QueryBuilder($this, (new DefaultRestrictionContainer())->removeAll());
+        // An empty container: the default restrictions pull in TCA schema services that are not available in unit tests.
+        return new QueryBuilder($this, new class extends AbstractRestrictionContainer {});
     }
 
     /**

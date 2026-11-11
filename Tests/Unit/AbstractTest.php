@@ -67,6 +67,24 @@ abstract class AbstractTest extends UnitTestCase
     }
 
     /**
+     * Register an in-memory SQLite database that contains the pages table.
+     */
+    protected function createPageDatabase(): Connection
+    {
+        return $this->createDatabase(
+            'CREATE TABLE pages (
+                uid INTEGER PRIMARY KEY AUTOINCREMENT,
+                pid INTEGER NOT NULL DEFAULT 0,
+                slug TEXT NOT NULL DEFAULT "",
+                doktype INTEGER NOT NULL DEFAULT 1,
+                sys_language_uid INTEGER NOT NULL DEFAULT 0,
+                l10n_parent INTEGER NOT NULL DEFAULT 0,
+                deleted INTEGER NOT NULL DEFAULT 0
+            )'
+        );
+    }
+
+    /**
      * Register a DI container with the given services (service id => instance) for GeneralUtility::makeInstance().
      *
      * @param array<string, object> $services

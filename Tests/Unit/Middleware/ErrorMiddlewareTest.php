@@ -12,6 +12,7 @@ use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use TYPO3\CMS\Core\Database\Connection;
 use TYPO3\CMS\Core\Http\HtmlResponse;
+use TYPO3\CMS\Core\Http\NormalizedParams;
 use TYPO3\CMS\Core\Http\ServerRequest;
 
 /**
@@ -113,6 +114,54 @@ final class ErrorMiddlewareTest extends AbstractTest
         self::assertSame([], $this->getRows($connection));
     }
 
+    public function testUserAgentOfTheRequestHeaderIsLogged(): void
+    {
+        $connection = $this->createErrorDatabase();
+        $userAgent = 'Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)';
+
+        $this->processRequest(
+            new ServerRequest('https://example.com/not-found', 'GET', 'php://input', ['User-Agent' => $userAgent]),
+            new HtmlResponse('not found', 404)
+        );
+
+        self::assertSame($userAgent, $this->getRows($connection)[0]['user_agent']);
+    }
+
+    public function testUserAgentOfTheNormalizedParamsIsPreferred(): void
+    {
+        $connection = $this->createErrorDatabase();
+        $request = (new ServerRequest('https://example.com/not-found', 'GET', 'php://input', ['User-Agent' => 'from-header']))
+            ->withAttribute('normalizedParams', NormalizedParams::createFromServerParams(['HTTP_USER_AGENT' => 'from-normalized-params']));
+
+        $this->processRequest($request, new HtmlResponse('not found', 404));
+
+        self::assertSame('from-normalized-params', $this->getRows($connection)[0]['user_agent']);
+    }
+
+    public function testMissingUserAgentIsLoggedAsEmptyString(): void
+    {
+        $connection = $this->createErrorDatabase();
+
+        $this->process('https://example.com/not-found', new HtmlResponse('not found', 404));
+
+        self::assertSame('', $this->getRows($connection)[0]['user_agent']);
+    }
+
+    public function testLongUserAgentIsTruncated(): void
+    {
+        $connection = $this->createErrorDatabase();
+        $userAgent = \str_repeat('a', ErrorMiddleware::USER_AGENT_MAX_LENGTH + 100);
+
+        $this->processRequest(
+            new ServerRequest('https://example.com/not-found', 'GET', 'php://input', ['User-Agent' => $userAgent]),
+            new HtmlResponse('not found', 404)
+        );
+
+        $stored = $this->getRows($connection)[0]['user_agent'];
+        self::assertSame(ErrorMiddleware::USER_AGENT_MAX_LENGTH, \mb_strlen((string) $stored));
+        self::assertSame(\mb_substr($userAgent, 0, ErrorMiddleware::USER_AGENT_MAX_LENGTH), $stored);
+    }
+
     public function testDatabaseErrorsDoNotBreakTheResponse(): void
     {
         // No table is created, so the insert fails
@@ -124,6 +173,11 @@ final class ErrorMiddlewareTest extends AbstractTest
 
     private function process(string $uri, ResponseInterface $response): ResponseInterface
     {
+        return $this->processRequest(new ServerRequest($uri), $response);
+    }
+
+    private function processRequest(ServerRequestInterface $request, ResponseInterface $response): ResponseInterface
+    {
         $handler = new class ($response) implements RequestHandlerInterface {
             public function __construct(private readonly ResponseInterface $response) {}
 
@@ -133,7 +187,7 @@ final class ErrorMiddlewareTest extends AbstractTest
             }
         };
 
-        return (new ErrorMiddleware())->process(new ServerRequest($uri), $handler);
+        return (new ErrorMiddleware())->process($request, $handler);
     }
 
     /**

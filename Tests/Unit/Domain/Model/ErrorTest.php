@@ -48,4 +48,31 @@ final class ErrorTest extends AbstractTest
 
         self::assertSame($uri, $error->getUri());
     }
+
+    public function testUserAgentIsEmptyByDefault(): void
+    {
+        self::assertSame('', (new Error())->getUserAgent());
+    }
+
+    /**
+     * @return array<string, array{string}>
+     */
+    public static function userAgentDataProvider(): array
+    {
+        return [
+            'empty user agent' => [''],
+            'browser' => ['Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36'],
+            'bot' => ['Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)'],
+            'cli client' => ['curl/8.7.1'],
+        ];
+    }
+
+    #[\PHPUnit\Framework\Attributes\DataProvider('userAgentDataProvider')]
+    public function testSetAndGetUserAgent(string $userAgent): void
+    {
+        $error = new Error();
+        $error->setUserAgent($userAgent);
+
+        self::assertSame($userAgent, $error->getUserAgent());
+    }
 }

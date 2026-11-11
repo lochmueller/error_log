@@ -63,6 +63,58 @@ final class ErrorRepositoryTest extends AbstractTest
         ], array_map(static fn(array $row): array => ['uri' => $row['uri'], 'c' => (int) $row['c']], $result));
     }
 
+    public function testFindLatestAggregatesUserAgentsPerUri(): void
+    {
+        $connection = $this->createErrorDatabase();
+        $rows = [
+            ['/a', 'curl/8.7.1'],
+            ['/a', 'curl/8.7.1'],
+            ['/a', 'Googlebot/2.1'],
+            ['/b', 'curl/8.7.1'],
+        ];
+        foreach ($rows as [$uri, $userAgent]) {
+            $connection->insert(ErrorRepository::TABLE_NAME, ['uri' => $uri, 'user_agent' => $userAgent, 'crdate' => 1, 'tstamp' => 1]);
+        }
+
+        $result = iterator_to_array((new ErrorRepository())->findLatest());
+
+        self::assertSame([
+            [
+                'uri' => '/a',
+                'c' => 3,
+                'agents' => [
+                    ['agent' => 'curl/8.7.1', 'c' => 2],
+                    ['agent' => 'Googlebot/2.1', 'c' => 1],
+                ],
+            ],
+            [
+                'uri' => '/b',
+                'c' => 1,
+                'agents' => [
+                    ['agent' => 'curl/8.7.1', 'c' => 1],
+                ],
+            ],
+        ], $result);
+    }
+
+    public function testFindLatestSkipsEmptyUserAgents(): void
+    {
+        $connection = $this->createErrorDatabase();
+        foreach (['', '   ', 'curl/8.7.1'] as $userAgent) {
+            $connection->insert(ErrorRepository::TABLE_NAME, ['uri' => '/a', 'user_agent' => $userAgent, 'crdate' => 1, 'tstamp' => 1]);
+        }
+
+        $result = iterator_to_array((new ErrorRepository())->findLatest());
+
+        self::assertSame([[
+            'uri' => '/a',
+            'c' => 3,
+            'agents' => [
+                ['agent' => 'curl/8.7.1', 'c' => 1],
+            ],
+        ]], $result);
+    }
+
     public function testFindLatestIsLazy(): void
     {
         $this->createErrorDatabase();
