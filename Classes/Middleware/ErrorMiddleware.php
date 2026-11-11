@@ -10,6 +10,7 @@ use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use TYPO3\CMS\Core\Database\ConnectionPool;
+use TYPO3\CMS\Core\Http\NormalizedParams;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Core\Utility\PathUtility;
 
@@ -19,6 +20,11 @@ use TYPO3\CMS\Core\Utility\PathUtility;
 class ErrorMiddleware implements MiddlewareInterface
 {
     public const DO_NOT_LOG_EXTENSION = 'js,css';
+
+    /**
+     * Maximum length of the stored user agent (see ext_tables.sql).
+     */
+    public const USER_AGENT_MAX_LENGTH = 500;
 
     /**
      * Process an incoming server request.
@@ -39,6 +45,7 @@ class ErrorMiddleware implements MiddlewareInterface
                     $connection = GeneralUtility::makeInstance(ConnectionPool::class)->getConnectionForTable(ErrorRepository::TABLE_NAME);
                     $connection->insert(ErrorRepository::TABLE_NAME, [
                         'uri' => $uriIn,
+                        'user_agent' => $this->getUserAgent($request),
                         'crdate' => \time(),
                         'tstamp' => \time(),
                     ]);
@@ -49,6 +56,14 @@ class ErrorMiddleware implements MiddlewareInterface
         }
 
         return $response;
+    }
+
+    protected function getUserAgent(ServerRequestInterface $request): string
+    {
+        $normalizedParams = $request->getAttribute('normalizedParams');
+        $userAgent = $normalizedParams instanceof NormalizedParams ? $normalizedParams->getHttpUserAgent() : $request->getHeaderLine('User-Agent');
+
+        return \mb_substr(\trim($userAgent), 0, self::USER_AGENT_MAX_LENGTH);
     }
 
     protected function getDoNotLogExtensions(): array

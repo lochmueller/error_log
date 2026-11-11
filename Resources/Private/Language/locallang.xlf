@@ -5,6 +5,7 @@
 		<body>
 			<trans-unit id="tx_errorlog_domain_model_error"><source><![CDATA[error_log ==> LLL:tx_errorlog_domain_model_error]]></source></trans-unit>
 			<trans-unit id="tx_errorlog_domain_model_error.uri"><source>uri</source></trans-unit>
+			<trans-unit id="tx_errorlog_domain_model_error.user_agent"><source>user agent</source></trans-unit>
 		</body>
 	</file>
 </xliff>

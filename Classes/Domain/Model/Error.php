@@ -10,6 +10,8 @@ class Error extends AbstractEntity
 {
     protected string $uri = '';
 
+    protected string $userAgent = '';
+
     public function getUri(): string
     {
         return $this->uri;
@@ -18,5 +20,15 @@ class Error extends AbstractEntity
     public function setUri(string $uri): void
     {
         $this->uri = $uri;
+    }
+
+    public function getUserAgent(): string
+    {
+        return $this->userAgent;
+    }
+
+    public function setUserAgent(string $userAgent): void
+    {
+        $this->userAgent = $userAgent;
     }
 }

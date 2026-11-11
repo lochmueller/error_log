@@ -59,6 +59,7 @@ abstract class AbstractTest extends UnitTestCase
                 uid INTEGER PRIMARY KEY AUTOINCREMENT,
                 pid INTEGER NOT NULL DEFAULT 0,
                 uri TEXT NOT NULL DEFAULT "",
+                user_agent TEXT NOT NULL DEFAULT "",
                 crdate INTEGER NOT NULL DEFAULT 0,
                 tstamp INTEGER NOT NULL DEFAULT 0
             )'

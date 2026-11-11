@@ -21,6 +21,12 @@ return [
             ],
             'label' => 'LLL:EXT:error_log/Resources/Private/Language/locallang.xlf:tx_errorlog_domain_model_error.uri',
         ],
+        'user_agent' => [
+            'config' => [
+                'type' => 'input',
+            ],
+            'label' => 'LLL:EXT:error_log/Resources/Private/Language/locallang.xlf:tx_errorlog_domain_model_error.user_agent',
+        ],
     ],
     'palettes' => [
         'access' => [
@@ -29,7 +35,7 @@ return [
     ],
     'types' => [
         '1' => [
-            'showitem' => 'uri,--div--;LLL:EXT:core/Resources/Private/Language/Form/locallang_tabs.xlf:language,--palette--;;language,--div--;LLL:EXT:core/Resources/Private/Language/Form/locallang_tabs.xlf:access,--palette--;LLL:EXT:frontend/Resources/Private/Language/locallang_tca.xlf:pages.palettes.access;access,--div--;LLL:EXT:frontend/Resources/Private/Language/locallang_ttc.xlf:tabs.extended',
+            'showitem' => 'uri,user_agent,--div--;LLL:EXT:core/Resources/Private/Language/Form/locallang_tabs.xlf:language,--palette--;;language,--div--;LLL:EXT:core/Resources/Private/Language/Form/locallang_tabs.xlf:access,--palette--;LLL:EXT:frontend/Resources/Private/Language/locallang_tca.xlf:pages.palettes.access;access,--div--;LLL:EXT:frontend/Resources/Private/Language/locallang_ttc.xlf:tabs.extended',
         ],
     ],
 ];

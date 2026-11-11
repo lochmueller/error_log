@@ -13,6 +13,7 @@
                 <th>
                     <input class="form-control" data-action="regexPathFilter" value="^\/(?!\.well-|wp-).*(?:\/|\.(html?|pdf))$" readonly>
                 </th>
+                <th>UserAgent</th>
             </tr>
         </thead>
         <tbody>
@@ -28,6 +29,21 @@
                 <td>{error.c}</td>
                 <td class="nowrap">
                     {error.uri}
+                </td>
+                <td>
+                    <f:if condition="{error.agents}">
+                        <details>
+                            <summary>
+                                <span class="badge badge-info"><f:count>{error.agents}</f:count></span>
+                                <f:format.crop maxCharacters="60" append="&#8230;">{error.agents.0.agent}</f:format.crop>
+                            </summary>
+                            <ul class="list-unstyled mb-0">
+                                <f:for each="{error.agents}" as="agent">
+                                    <li><span class="badge badge-info">{agent.c}</span> {agent.agent}</li>
+                                </f:for>
+                            </ul>
+                        </details>
+                    </f:if>
                 </td>
             </tr>
         </f:for>

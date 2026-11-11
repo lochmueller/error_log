@@ -4,6 +4,7 @@
 CREATE TABLE tx_errorlog_domain_model_error (
 	uid int(11) NOT NULL auto_increment,
 	uri varchar(1000) NOT NULL,
+	user_agent varchar(500) DEFAULT '' NOT NULL,
 	crdate int(15) NOT NULL,
 	tstamp int(15) NOT NULL,
 	PRIMARY KEY (uid)
