@@ -18,7 +18,7 @@ use TYPO3\CMS\Core\Utility\PathUtility;
  */
 class ErrorMiddleware implements MiddlewareInterface
 {
-    const DO_NOT_LOG_EXTENSION = 'js,css';
+    public const DO_NOT_LOG_EXTENSION = 'js,css';
 
     /**
      * Process an incoming server request.

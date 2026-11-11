@@ -14,13 +14,10 @@ use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
 
 class ErrorController extends ActionController
 {
-
     public function __construct(
         protected ErrorRepository       $errorRepository,
         protected ModuleTemplateFactory $moduleTemplateFactory
-    )
-    {
-    }
+    ) {}
 
     public function indexAction(): ResponseInterface
     {

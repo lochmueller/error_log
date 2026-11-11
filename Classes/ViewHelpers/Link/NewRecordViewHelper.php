@@ -12,7 +12,6 @@ use TYPO3Fluid\Fluid\Core\ViewHelper\Traits\CompileWithRenderStatic;
 
 class NewRecordViewHelper extends AbstractTagBasedViewHelper
 {
-
     use CompileWithRenderStatic;
     public function initializeArguments(): void
     {
@@ -48,6 +47,6 @@ class NewRecordViewHelper extends AbstractTagBasedViewHelper
 
         $uriBuilder = GeneralUtility::makeInstance(UriBuilder::class);
 
-        return (string)$uriBuilder->buildUriFromRoute('record_edit', $params);
+        return (string) $uriBuilder->buildUriFromRoute('record_edit', $params);
     }
 }

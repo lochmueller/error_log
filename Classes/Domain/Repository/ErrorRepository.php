@@ -11,7 +11,6 @@ use TYPO3\CMS\Extbase\Persistence\Repository;
 
 class ErrorRepository extends Repository
 {
-
     public const TABLE_NAME = 'tx_errorlog_domain_model_error';
 
     /**
