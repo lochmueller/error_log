@@ -6,13 +6,10 @@ namespace HDNET\ErrorLog\ViewHelpers\Link;
 
 use TYPO3\CMS\Backend\Routing\UriBuilder;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
-use TYPO3Fluid\Fluid\Core\Rendering\RenderingContextInterface;
 use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractTagBasedViewHelper;
-use TYPO3Fluid\Fluid\Core\ViewHelper\Traits\CompileWithRenderStatic;
 
 class NewRecordViewHelper extends AbstractTagBasedViewHelper
 {
-    use CompileWithRenderStatic;
     public function initializeArguments(): void
     {
         $this->registerArgument('uid', 'int', 'uid < 0 will insert the record after the given uid', false);
@@ -24,24 +21,25 @@ class NewRecordViewHelper extends AbstractTagBasedViewHelper
         $this->registerArgument('fields', 'array', '', false, []);
     }
 
-    public static function renderStatic(array $arguments, \Closure $renderChildrenClosure, RenderingContextInterface $renderingContext): string
+    public function render(): string
     {
-        if ($arguments['uid'] && $arguments['pid']) {
+        if ($this->arguments['uid'] && $this->arguments['pid']) {
             throw new \InvalidArgumentException('Can\'t handle both uid and pid for new records', 1526136338);
         }
-        if (isset($arguments['uid']) && $arguments['uid'] >= 0) {
-            throw new \InvalidArgumentException('Uid must be negative integer, ' . $arguments['uid'] . ' given', 1526136362);
+        if (isset($this->arguments['uid']) && $this->arguments['uid'] >= 0) {
+            throw new \InvalidArgumentException('Uid must be negative integer, ' . $this->arguments['uid'] . ' given', 1526136362);
         }
 
-        if (empty($arguments['returnUrl'])) {
-            $arguments['returnUrl'] = GeneralUtility::getIndpEnv('REQUEST_URI');
+        $returnUrl = $this->arguments['returnUrl'];
+        if (empty($returnUrl)) {
+            $returnUrl = GeneralUtility::getIndpEnv('REQUEST_URI');
         }
 
         $params = [
-            'edit' => [$arguments['table'] => [$arguments['uid'] ?? $arguments['pid'] ?? 0 => 'new']],
-            'returnUrl' => $arguments['returnUrl'],
+            'edit' => [$this->arguments['table'] => [$this->arguments['uid'] ?? $this->arguments['pid'] ?? 0 => 'new']],
+            'returnUrl' => $returnUrl,
             'defVals' => [
-                $arguments['table'] => $arguments['fields'],
+                $this->arguments['table'] => $this->arguments['fields'],
             ],
         ];
 

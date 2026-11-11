@@ -5,9 +5,7 @@ declare(strict_types=1);
 return [
     'ctrl' => [
         'crdate' => 'crdate',
-        'cruser_id' => 'cruser_id',
         'delete' => 'deleted',
-        'dividers2tabs' => 1,
         'iconfile' => 'EXT:error_log/Resources/Public/Icons/Extension.svg',
         'label' => 'uri',
         'sortby' => 'sorting',

@@ -9,7 +9,6 @@ use HDNET\ErrorLog\ViewHelpers\Link\NewRecordViewHelper;
 use TYPO3\CMS\Backend\Routing\UriBuilder;
 use TYPO3\CMS\Core\Http\Uri;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
-use TYPO3Fluid\Fluid\Core\Rendering\RenderingContextInterface;
 
 /**
  * NewRecordViewHelperTest.
@@ -51,7 +50,7 @@ final class NewRecordViewHelperTest extends AbstractTest
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionCode(1526136338);
 
-        $this->renderStatic(['uid' => -1, 'pid' => 12, 'table' => 'pages']);
+        $this->renderViewHelper(['uid' => -1, 'pid' => 12, 'table' => 'pages']);
     }
 
     /**
@@ -71,14 +70,14 @@ final class NewRecordViewHelperTest extends AbstractTest
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionCode(1526136362);
 
-        $this->renderStatic(['uid' => $uid, 'table' => 'pages']);
+        $this->renderViewHelper(['uid' => $uid, 'table' => 'pages']);
     }
 
     public function testUriIsBuiltForANewRecordAfterTheGivenUid(): void
     {
         $this->registerUriBuilder();
 
-        $uri = $this->renderStatic([
+        $uri = $this->renderViewHelper([
             'uid' => -5,
             'table' => 'sys_redirect',
             'returnUrl' => '/typo3/module/site/redirects',
@@ -99,7 +98,7 @@ final class NewRecordViewHelperTest extends AbstractTest
     {
         $this->registerUriBuilder();
 
-        $this->renderStatic(['pid' => 12, 'table' => 'sys_redirect', 'returnUrl' => '/typo3/']);
+        $this->renderViewHelper(['pid' => 12, 'table' => 'sys_redirect', 'returnUrl' => '/typo3/']);
 
         self::assertSame(['sys_redirect' => [12 => 'new']], $this->buildUriCalls[0][1]['edit']);
     }
@@ -108,7 +107,7 @@ final class NewRecordViewHelperTest extends AbstractTest
     {
         $this->registerUriBuilder();
 
-        $this->renderStatic(['table' => 'sys_redirect', 'returnUrl' => '/typo3/']);
+        $this->renderViewHelper(['table' => 'sys_redirect', 'returnUrl' => '/typo3/']);
 
         self::assertSame(['sys_redirect' => [0 => 'new']], $this->buildUriCalls[0][1]['edit']);
     }
@@ -119,7 +118,7 @@ final class NewRecordViewHelperTest extends AbstractTest
         $_SERVER['REQUEST_URI'] = '/typo3/module/web/errorlog';
         GeneralUtility::flushInternalRuntimeCaches();
 
-        $this->renderStatic(['table' => 'sys_redirect', 'returnUrl' => '']);
+        $this->renderViewHelper(['table' => 'sys_redirect', 'returnUrl' => '']);
 
         self::assertSame('/typo3/module/web/errorlog', $this->buildUriCalls[0][1]['returnUrl']);
     }
@@ -127,16 +126,16 @@ final class NewRecordViewHelperTest extends AbstractTest
     /**
      * @param array<string, mixed> $arguments
      */
-    private function renderStatic(array $arguments): string
+    private function renderViewHelper(array $arguments): string
     {
         // Fluid always passes all registered arguments, so missing ones are null
         $arguments += ['uid' => null, 'pid' => null, 'returnUrl' => '', 'defaultValues' => [], 'fields' => []];
 
-        return NewRecordViewHelper::renderStatic(
-            $arguments,
-            static fn(): string => '',
-            $this->createMock(RenderingContextInterface::class)
-        );
+        $viewHelper = new NewRecordViewHelper();
+        $viewHelper->initializeArguments();
+        $viewHelper->setArguments($arguments);
+
+        return $viewHelper->render();
     }
 
     private function registerUriBuilder(): void
